@@ -1,0 +1,286 @@
+
+// Farm Grid Dimensions
+export const GRID_SIZE = 24;
+export const CELL_SIZE = 20;
+
+export type AreaType = 
+  | 'coop' 
+  | 'feed' 
+  | 'processing' 
+  | 'ventilation' 
+  | 'storage'
+  | 'entry'
+  | 'path'
+  | 'empty';
+
+export interface FarmArea {
+  id: string;
+  name: string;
+  type: AreaType;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  capacity?: number;
+  efficiency?: number;
+  description: string;
+}
+
+export interface FarmStats {
+  chickens: number;
+  eggsPerDay: number;
+  feedConsumption: number;
+  revenue: number;
+  expenses: number;
+  profit: number;
+}
+
+// Farm areas data - defines the layout of the farm
+export const farmAreas: FarmArea[] = [
+  // Main building outline
+  {
+    id: 'main-building',
+    name: 'Main Building',
+    type: 'empty',
+    x: 0,
+    y: 0,
+    width: GRID_SIZE,
+    height: GRID_SIZE,
+    description: 'The main egg farm facility'
+  },
+  
+  // Chicken coops
+  {
+    id: 'coop-1',
+    name: 'Coop A',
+    type: 'coop',
+    x: 1,
+    y: 1,
+    width: 6,
+    height: 8,
+    capacity: 500,
+    efficiency: 0.92,
+    description: 'Large chicken coop with automated feeding system'
+  },
+  {
+    id: 'coop-2',
+    name: 'Coop B',
+    type: 'coop',
+    x: 8,
+    y: 1,
+    width: 6,
+    height: 8,
+    capacity: 500,
+    efficiency: 0.88,
+    description: 'Large chicken coop with nesting boxes'
+  },
+  {
+    id: 'coop-3',
+    name: 'Coop C',
+    type: 'coop',
+    x: 15,
+    y: 1,
+    width: 8,
+    height: 6,
+    capacity: 400,
+    efficiency: 0.95,
+    description: 'Medium chicken coop with enhanced ventilation'
+  },
+  
+  // Feed storage
+  {
+    id: 'feed-storage',
+    name: 'Feed Storage',
+    type: 'feed',
+    x: 1,
+    y: 15,
+    width: 4,
+    height: 6,
+    description: 'Storage area for chicken feed and supplements'
+  },
+  
+  // Egg processing
+  {
+    id: 'processing-1',
+    name: 'Egg Washing',
+    type: 'processing',
+    x: 15,
+    y: 12,
+    width: 6,
+    height: 4,
+    description: 'Area for washing and sanitizing eggs'
+  },
+  {
+    id: 'processing-2',
+    name: 'Egg Sorting',
+    type: 'processing',
+    x: 15,
+    y: 17,
+    width: 6,
+    height: 4,
+    description: 'Automated system for sorting eggs by size'
+  },
+  
+  // Ventilation systems
+  {
+    id: 'vent-1',
+    name: 'Main Ventilation',
+    type: 'ventilation',
+    x: 1,
+    y: 10,
+    width: 2,
+    height: 2,
+    description: 'Primary ventilation system for Coop A'
+  },
+  {
+    id: 'vent-2',
+    name: 'Secondary Ventilation',
+    type: 'ventilation',
+    x: 10,
+    y: 10,
+    width: 2,
+    height: 2,
+    description: 'Secondary ventilation system for Coop B'
+  },
+  {
+    id: 'vent-3',
+    name: 'East Ventilation',
+    type: 'ventilation',
+    x: 18,
+    y: 8,
+    width: 2,
+    height: 2,
+    description: 'Ventilation system for Coop C and processing areas'
+  },
+  
+  // Storage areas
+  {
+    id: 'storage-1',
+    name: 'Egg Storage',
+    type: 'storage',
+    x: 8,
+    y: 15,
+    width: 5,
+    height: 4,
+    description: 'Climate-controlled storage for processed eggs'
+  },
+  {
+    id: 'storage-2',
+    name: 'Equipment Storage',
+    type: 'storage',
+    x: 8,
+    y: 20,
+    width: 5,
+    height: 3,
+    description: 'Storage area for farm equipment and supplies'
+  },
+  
+  // Entries/exits
+  {
+    id: 'entry-main',
+    name: 'Main Entrance',
+    type: 'entry',
+    x: 10,
+    y: 23,
+    width: 4,
+    height: 1,
+    description: 'Main entrance to the facility'
+  },
+  {
+    id: 'entry-delivery',
+    name: 'Delivery Entrance',
+    type: 'entry',
+    x: 0,
+    y: 12,
+    width: 1,
+    height: 3,
+    description: 'Side entrance for deliveries'
+  },
+  
+  // Worker paths (representative selection - not all paths shown)
+  {
+    id: 'path-1',
+    name: 'Main Corridor',
+    type: 'path',
+    x: 8,
+    y: 10,
+    width: 1,
+    height: 14,
+    description: 'Main north-south corridor'
+  },
+  {
+    id: 'path-2',
+    name: 'East-West Corridor',
+    type: 'path',
+    x: 9,
+    y: 10,
+    width: 6,
+    height: 1,
+    description: 'Corridor connecting coops to processing'
+  },
+  {
+    id: 'path-3',
+    name: 'Processing Access',
+    type: 'path',
+    x: 14,
+    y: 15,
+    width: 1,
+    height: 6,
+    description: 'Access path to egg processing areas'
+  },
+];
+
+// Farm statistics
+export const farmStats: FarmStats = {
+  chickens: 1400,
+  eggsPerDay: 1120,
+  feedConsumption: 280, // kg per day
+  revenue: 1680, // $ per day
+  expenses: 840, // $ per day
+  profit: 840, // $ per day
+};
+
+// Helper functions
+export const getAreaColor = (type: AreaType): string => {
+  switch (type) {
+    case 'coop':
+      return 'bg-farm-yellow';
+    case 'feed':
+      return 'bg-amber-100';
+    case 'processing':
+      return 'bg-farm-blue';
+    case 'ventilation':
+      return 'bg-blue-100';
+    case 'storage':
+      return 'bg-farm-gray';
+    case 'entry':
+      return 'bg-gray-300';
+    case 'path':
+      return 'bg-gray-200';
+    case 'empty':
+    default:
+      return 'bg-white';
+  }
+};
+
+export const getAreaIcon = (type: AreaType): string => {
+  switch (type) {
+    case 'coop':
+      return '🐔';
+    case 'feed':
+      return '🌾';
+    case 'processing':
+      return '🥚';
+    case 'ventilation':
+      return '💨';
+    case 'storage':
+      return '📦';
+    case 'entry':
+      return '🚪';
+    case 'path':
+      return '🚶';
+    case 'empty':
+    default:
+      return '';
+  }
+};

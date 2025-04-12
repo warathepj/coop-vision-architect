@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom farm simulator colors
+				"farm-green": "#F2FCE2",
+				"farm-yellow": "#FEF7CD",
+				"farm-blue": "#D3E4FD",
+				"farm-gray": "#F1F0FB",
+				"farm-purple": "#9b87f5",
+				"farm-purple-dark": "#7E69AB",
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
