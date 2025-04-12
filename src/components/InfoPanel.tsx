@@ -1,8 +1,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FarmArea, getAreaIcon } from "@/lib/farmData";
+import { FarmArea, getAreaIcon, temperatureSensors } from "@/lib/farmData";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { X, Thermometer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface InfoPanelProps {
@@ -12,6 +12,11 @@ interface InfoPanelProps {
 
 const InfoPanel = ({ selectedArea, onClose }: InfoPanelProps) => {
   if (!selectedArea) return null;
+  
+  // Find any temperature sensors associated with this area
+  const areaSensors = temperatureSensors.filter(
+    sensor => sensor.relatedArea === selectedArea.id
+  );
   
   const getTypeLabel = (type: string): string => {
     return type.charAt(0).toUpperCase() + type.slice(1);
@@ -69,6 +74,24 @@ const InfoPanel = ({ selectedArea, onClose }: InfoPanelProps) => {
           <div className="text-sm font-medium">Location:</div>
           <div className="text-sm">({selectedArea.x}, {selectedArea.y})</div>
         </div>
+        
+        {areaSensors.length > 0 && (
+          <>
+            <div className="mt-4 mb-2">
+              <h3 className="text-sm font-medium flex items-center">
+                <Thermometer className="h-4 w-4 mr-1 text-red-500" />
+                Temperature Sensors
+              </h3>
+            </div>
+            {areaSensors.map((sensor) => (
+              <div key={sensor.id} className="bg-gray-50 dark:bg-gray-800 p-2 rounded-md mt-2">
+                <div className="text-sm font-medium">{sensor.name}</div>
+                <div className="text-xs text-muted-foreground">{sensor.description}</div>
+                <div className="text-xs mt-1">Coverage radius: {sensor.coverage}m</div>
+              </div>
+            ))}
+          </>
+        )}
       </CardContent>
     </Card>
   );

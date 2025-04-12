@@ -1,4 +1,3 @@
-
 // Farm Grid Dimensions
 export const GRID_SIZE = 24;
 export const CELL_SIZE = 20;
@@ -33,6 +32,17 @@ export interface FarmStats {
   revenue: number;
   expenses: number;
   profit: number;
+}
+
+// Temperature sensor data
+export interface TemperatureSensor {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  coverage: number; // Coverage radius in grid units
+  description: string;
+  relatedArea?: string; // ID of related area, if any
 }
 
 // Farm areas data - defines the layout of the farm
@@ -239,6 +249,111 @@ export const farmStats: FarmStats = {
   expenses: 840, // $ per day
   profit: 840, // $ per day
 };
+
+// Temperature sensors - optimal positions for monitoring
+export const temperatureSensors: TemperatureSensor[] = [
+  // Coop A sensors
+  {
+    id: "sensor-coop-a-1",
+    name: "Coop A Center",
+    x: 4,
+    y: 5,
+    coverage: 3,
+    description: "Primary sensor for Coop A, monitors central temperature",
+    relatedArea: "coop-1"
+  },
+  {
+    id: "sensor-coop-a-2",
+    name: "Coop A Corner",
+    x: 1,
+    y: 1,
+    coverage: 2,
+    description: "Secondary sensor for Coop A, monitors corner temperature variations",
+    relatedArea: "coop-1"
+  },
+  
+  // Coop B sensors
+  {
+    id: "sensor-coop-b-1",
+    name: "Coop B Center",
+    x: 11,
+    y: 5,
+    coverage: 3,
+    description: "Primary sensor for Coop B, monitors central temperature",
+    relatedArea: "coop-2"
+  },
+  {
+    id: "sensor-coop-b-2",
+    name: "Coop B Corner",
+    x: 13,
+    y: 1,
+    coverage: 2,
+    description: "Secondary sensor for Coop B, monitors corner temperature variations",
+    relatedArea: "coop-2"
+  },
+  
+  // Coop C sensors
+  {
+    id: "sensor-coop-c-1",
+    name: "Coop C Center",
+    x: 19,
+    y: 4,
+    coverage: 3,
+    description: "Primary sensor for Coop C, monitors central temperature",
+    relatedArea: "coop-3"
+  },
+  
+  // Ventilation system sensors
+  {
+    id: "sensor-vent-1",
+    name: "Main Ventilation Intake",
+    x: 1,
+    y: 10,
+    coverage: 2,
+    description: "Monitors temperature at main ventilation intake",
+    relatedArea: "vent-1"
+  },
+  {
+    id: "sensor-vent-2",
+    name: "Secondary Ventilation Intake",
+    x: 10,
+    y: 11,
+    coverage: 2,
+    description: "Monitors temperature at secondary ventilation intake",
+    relatedArea: "vent-2"
+  },
+  {
+    id: "sensor-vent-3",
+    name: "East Ventilation Output",
+    x: 19,
+    y: 8,
+    coverage: 2,
+    description: "Monitors temperature at east ventilation output",
+    relatedArea: "vent-3"
+  },
+  
+  // Processing area sensors
+  {
+    id: "sensor-proc-1",
+    name: "Egg Washing Temperature",
+    x: 18,
+    y: 14,
+    coverage: 2,
+    description: "Monitors temperature in egg washing area",
+    relatedArea: "processing-1"
+  },
+  
+  // Storage area sensor
+  {
+    id: "sensor-storage",
+    name: "Egg Storage Temperature",
+    x: 10,
+    y: 17,
+    coverage: 2,
+    description: "Monitors temperature in climate-controlled egg storage",
+    relatedArea: "storage-1"
+  }
+];
 
 // Helper functions
 export const getAreaColor = (type: AreaType): string => {
