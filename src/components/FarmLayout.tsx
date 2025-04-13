@@ -1,8 +1,9 @@
 
 import { farmAreas, FarmArea, getAreaColor, GRID_SIZE, CELL_SIZE, temperatureSensors, TemperatureSensor } from "@/lib/farmData";
 import { useState } from "react";
-import { Thermometer } from "lucide-react";
+import { Thermometer, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface FarmLayoutProps {
   onSelectArea: (area: FarmArea | null) => void;
@@ -94,21 +95,39 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
             {/* Sensor indicator */}
             <div className="relative">
               <Thermometer 
-                className="text-red-500 h-5 w-5 drop-shadow-md" 
+                className={cn(
+                  "h-5 w-5 drop-shadow-md",
+                  sensor.isBackup ? "text-amber-500" : "text-red-500"
+                )}
                 strokeWidth={2.5} 
               />
+              {sensor.isBackup && (
+                <div className="absolute -top-1 -right-1 h-2 w-2 bg-amber-400 rounded-full border border-white dark:border-gray-800"></div>
+              )}
 
               {/* Coverage area indicator - only show when hovered */}
               {hoveredSensor === sensor.id && (
-                <div 
-                  className="absolute rounded-full bg-red-500/10 border border-red-500/30 -z-10"
-                  style={{
-                    width: sensor.coverage * 2 * CELL_SIZE,
-                    height: sensor.coverage * 2 * CELL_SIZE,
-                    left: -sensor.coverage * CELL_SIZE + CELL_SIZE/2,
-                    top: -sensor.coverage * CELL_SIZE + CELL_SIZE/2,
-                  }}
-                />
+                <>
+                  <div 
+                    className="absolute rounded-full bg-red-500/10 border border-red-500/30 -z-10"
+                    style={{
+                      width: sensor.coverage * 2 * CELL_SIZE,
+                      height: sensor.coverage * 2 * CELL_SIZE,
+                      left: -sensor.coverage * CELL_SIZE + CELL_SIZE/2,
+                      top: -sensor.coverage * CELL_SIZE + CELL_SIZE/2,
+                    }}
+                  />
+                  <div className="absolute left-6 top-0 bg-white dark:bg-gray-800 px-2 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 w-48 text-xs">
+                    <div className="font-medium">{sensor.name}</div>
+                    <div className="text-xs text-muted-foreground">{sensor.sensorType}</div>
+                    {sensor.alertThresholds && (
+                      <div className="flex items-center mt-1 text-amber-600 dark:text-amber-400">
+                        <AlertCircle className="h-3 w-3 mr-1" />
+                        {sensor.alertThresholds.low}°C - {sensor.alertThresholds.high}°C
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -116,10 +135,42 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
       </div>
 
       {/* Legend for temperature sensors */}
-      <div className="mt-4 flex items-center justify-center">
-        <div className="flex items-center bg-white dark:bg-gray-800 px-3 py-1 rounded-full shadow-sm border border-gray-300 dark:border-gray-700">
-          <Thermometer className="text-red-500 h-4 w-4 mr-2" />
-          <span className="text-sm">Temperature Sensors ({temperatureSensors.length})</span>
+      <div className="mt-4 flex flex-col items-center">
+        <div className="bg-white dark:bg-gray-800 px-4 py-3 rounded-lg shadow-sm border border-gray-300 dark:border-gray-700 w-full max-w-md">
+          <h4 className="text-sm font-medium mb-2">Temperature Monitoring System</h4>
+          <div className="flex items-center mb-2">
+            <Thermometer className="text-red-500 h-4 w-4 mr-2" />
+            <span className="text-sm">Primary Sensors ({temperatureSensors.filter(s => !s.isBackup).length})</span>
+            <span className="text-xs text-gray-500 ml-2">Standard monitoring points</span>
+          </div>
+          <div className="flex items-center mb-2">
+            <Thermometer className="text-amber-500 h-4 w-4 mr-2" />
+            <span className="text-sm">Backup Sensors ({temperatureSensors.filter(s => s.isBackup).length})</span>
+            <span className="text-xs text-gray-500 ml-2">Redundancy coverage</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <div>
+              <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-300 w-full justify-center">
+                Coops: 21-24°C
+              </Badge>
+            </div>
+            <div>
+              <Badge variant="outline" className="bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 w-full justify-center">
+                Processing: 16-22°C
+              </Badge>
+            </div>
+            <div>
+              <Badge variant="outline" className="bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-300 w-full justify-center">
+                Storage: 10-14°C
+              </Badge>
+            </div>
+            <div>
+              <Badge variant="outline" className="bg-purple-50 dark:bg-purple-950 text-purple-800 dark:text-purple-300 w-full justify-center">
+                Ventilation: 18-28°C
+              </Badge>
+            </div>
+          </div>
+          <div className="text-xs mt-3 text-gray-500">Hover over sensors for details and coverage area</div>
         </div>
       </div>
     </div>
