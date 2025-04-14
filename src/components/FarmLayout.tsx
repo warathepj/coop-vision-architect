@@ -12,14 +12,21 @@ interface FarmLayoutProps {
 const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
   const [hoveredArea, setHoveredArea] = useState<string | null>(null);
   const [hoveredSensor, setHoveredSensor] = useState<string | null>(null);
-  const [sensorTemp, setSensorTemp] = useState<number>(24);  // Add temperature state
+  const [cornerTemp, setCornerTemp] = useState<number>(24);
+  const [centerTemp, setCenterTemp] = useState<number>(24);
 
   useEffect(() => {
-    // Update temperature every 5 seconds
+    // Update temperatures every 5 seconds
     const interval = setInterval(() => {
-      // Generate random temperature between 17 and 30
-      const newTemp = Math.floor(Math.random() * (30 - 17 + 1)) + 17;
-      setSensorTemp(newTemp);
+      // Generate random temperature between 17 and 30 for corner
+      const newCornerTemp = Math.floor(Math.random() * (30 - 17 + 1)) + 17;
+      setCornerTemp(newCornerTemp);
+      
+      // Generate center temperature within ±1 degree of corner
+      const minCenterTemp = Math.max(17, newCornerTemp - 1);
+      const maxCenterTemp = Math.min(30, newCornerTemp + 1);
+      const newCenterTemp = minCenterTemp + Math.random() * (maxCenterTemp - minCenterTemp);
+      setCenterTemp(Math.round(newCenterTemp * 10) / 10);
     }, 5000);
 
     // Cleanup interval on component unmount
@@ -118,10 +125,10 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
                 <div className="absolute -top-1 -right-1 h-2 w-2 bg-amber-400 rounded-full border border-white dark:border-gray-800"></div>
               )}
 
-              {/* Show temperature for Coop A Corner sensor */}
-              {sensor.id === "sensor-coop-a-2" && (
+              {/* Show temperature for both Coop A sensors */}
+              {(sensor.id === "sensor-coop-a-2" || sensor.id === "sensor-coop-a-1") && (
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
-                  {sensorTemp}°C
+                  {sensor.id === "sensor-coop-a-2" ? cornerTemp : centerTemp}°C
                 </div>
               )}
 
@@ -140,8 +147,8 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
                   <div className="absolute left-6 top-0 bg-white dark:bg-gray-800 px-2 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 w-48 text-xs">
                     <div className="font-medium">{sensor.name}</div>
                     <div className="text-xs text-muted-foreground">{sensor.sensorType}</div>
-                    {sensor.id === "sensor-coop-a-2" && (
-                      <div className="text-xs mt-1">Current: {sensorTemp}°C</div>
+                    {(sensor.id === "sensor-coop-a-2" || sensor.id === "sensor-coop-a-1") && (
+                      <div className="text-xs mt-1">Current: {sensor.id === "sensor-coop-a-2" ? cornerTemp : centerTemp}°C</div>
                     )}
                     {sensor.alertThresholds && (
                       <div className="flex items-center mt-1 text-amber-600 dark:text-amber-400">
