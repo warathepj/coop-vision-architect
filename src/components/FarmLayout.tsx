@@ -1,6 +1,6 @@
 
 import { farmAreas, FarmArea, getAreaColor, GRID_SIZE, CELL_SIZE, temperatureSensors, TemperatureSensor } from "@/lib/farmData";
-import { useState, useEffect } from "react";  // Add useEffect import
+import { useState, useEffect } from "react";
 import { Thermometer, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,8 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
   const [hoveredSensor, setHoveredSensor] = useState<string | null>(null);
   const [cornerTemp, setCornerTemp] = useState<number>(24);
   const [centerTemp, setCenterTemp] = useState<number>(24);
+  const [coopBCornerTemp, setCoopBCornerTemp] = useState<number>(24);
+  const [coopBCenterTemp, setCoopBCenterTemp] = useState<number>(24);
 
   useEffect(() => {
     // Update temperatures every 5 seconds
@@ -27,6 +29,15 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
       const maxCenterTemp = Math.min(30, newCornerTemp + 1);
       const newCenterTemp = minCenterTemp + Math.random() * (maxCenterTemp - minCenterTemp);
       setCenterTemp(Math.round(newCenterTemp * 10) / 10);
+
+      // Coop B temperatures
+      const newCoopBCornerTemp = Math.floor(Math.random() * (30 - 17 + 1)) + 17;
+      setCoopBCornerTemp(newCoopBCornerTemp);
+      
+      const minCoopBCenterTemp = Math.max(17, newCoopBCornerTemp - 1);
+      const maxCoopBCenterTemp = Math.min(30, newCoopBCornerTemp + 1);
+      const newCoopBCenterTemp = minCoopBCenterTemp + Math.random() * (maxCoopBCenterTemp - minCoopBCenterTemp);
+      setCoopBCenterTemp(Math.round(newCoopBCenterTemp * 10) / 10);
     }, 5000);
 
     // Cleanup interval on component unmount
@@ -129,6 +140,13 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
               {(sensor.id === "sensor-coop-a-2" || sensor.id === "sensor-coop-a-1") && (
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
                   {sensor.id === "sensor-coop-a-2" ? cornerTemp : centerTemp}°C
+                </div>
+              )}
+
+              {/* Show temperature for both Coop B sensors */}
+              {(sensor.id === "sensor-coop-b-2" || sensor.id === "sensor-coop-b-1") && (
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
+                  {sensor.id === "sensor-coop-b-2" ? coopBCornerTemp : coopBCenterTemp}°C
                 </div>
               )}
 
