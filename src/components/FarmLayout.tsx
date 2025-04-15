@@ -7,9 +7,21 @@ import { Badge } from "@/components/ui/badge";
 
 interface FarmLayoutProps {
   onSelectArea: (area: FarmArea | null) => void;
+  onTemperatureUpdate?: (temperatures: {
+    cornerTemp: number;
+    centerTemp: number;
+    coopBCornerTemp: number;
+    coopBCenterTemp: number;
+    coopCTemp: number;
+    mainVentTemp: number;
+    secondaryVentTemp: number;
+    eastVentTemp: number;
+    eggWashingTemp: number;
+    eggStorageTemp: number;
+  }) => void;
 }
 
-const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
+const FarmLayout = ({ onSelectArea, onTemperatureUpdate }: FarmLayoutProps) => {
   const [hoveredArea, setHoveredArea] = useState<string | null>(null);
   const [hoveredSensor, setHoveredSensor] = useState<string | null>(null);
   const [cornerTemp, setCornerTemp] = useState<number>(24);
@@ -18,6 +30,10 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
   const [coopBCenterTemp, setCoopBCenterTemp] = useState<number>(24);
   const [coopCTemp, setCoopCTemp] = useState<number>(24);
   const [mainVentTemp, setMainVentTemp] = useState<number>(23);
+  const [secondaryVentTemp, setSecondaryVentTemp] = useState<number>(23);
+  const [eastVentTemp, setEastVentTemp] = useState<number>(23);
+  const [eggWashingTemp, setEggWashingTemp] = useState<number>(20);
+  const [eggStorageTemp, setEggStorageTemp] = useState<number>(12);
 
   useEffect(() => {
     // Update temperatures every 5 seconds
@@ -48,11 +64,55 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
       // Main ventilation temperature (17-29 range)
       const newMainVentTemp = Math.floor(Math.random() * (29 - 17 + 1)) + 17;
       setMainVentTemp(newMainVentTemp);
+
+      // Secondary ventilation temperature (17-29 range)
+      const newSecondaryVentTemp = Math.floor(Math.random() * (29 - 17 + 1)) + 17;
+      setSecondaryVentTemp(newSecondaryVentTemp);
+
+      // East ventilation temperature (17-29 range)
+      const newEastVentTemp = Math.floor(Math.random() * (29 - 17 + 1)) + 17;
+      setEastVentTemp(newEastVentTemp);
+
+      // Egg washing temperature (16-24 range)
+      const newEggWashingTemp = Math.floor(Math.random() * (24 - 16 + 1)) + 16;
+      setEggWashingTemp(newEggWashingTemp);
+
+      // Egg storage temperature (7-16 range)
+      const newEggStorageTemp = Math.floor(Math.random() * (16 - 7 + 1)) + 7;
+      setEggStorageTemp(newEggStorageTemp);
     }, 5000);
 
     // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    // Notify parent component of temperature updates
+    onTemperatureUpdate?.({
+      cornerTemp,
+      centerTemp,
+      coopBCornerTemp,
+      coopBCenterTemp,
+      coopCTemp,
+      mainVentTemp,
+      secondaryVentTemp,
+      eastVentTemp,
+      eggWashingTemp,
+      eggStorageTemp
+    });
+  }, [
+    cornerTemp,
+    centerTemp,
+    coopBCornerTemp,
+    coopBCenterTemp,
+    coopCTemp,
+    mainVentTemp,
+    secondaryVentTemp,
+    eastVentTemp,
+    eggWashingTemp,
+    eggStorageTemp,
+    onTemperatureUpdate
+  ]);
 
   const handleAreaClick = (area: FarmArea) => {
     onSelectArea(area);
@@ -171,6 +231,34 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
               {sensor.id === "sensor-vent-1" && (
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
                   {mainVentTemp}°C
+                </div>
+              )}
+
+              {/* Show temperature for secondary ventilation sensor */}
+              {sensor.id === "sensor-vent-2" && (
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
+                  {secondaryVentTemp}°C
+                </div>
+              )}
+
+              {/* Show temperature for east ventilation sensor */}
+              {sensor.id === "sensor-vent-3" && (
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
+                  {eastVentTemp}°C
+                </div>
+              )}
+
+              {/* Show temperature for egg washing sensor */}
+              {sensor.id === "sensor-proc-1" && (
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
+                  {eggWashingTemp}°C
+                </div>
+              )}
+
+              {/* Show temperature for egg storage sensor */}
+              {sensor.id === "sensor-storage" && (
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
+                  {eggStorageTemp}°C
                 </div>
               )}
 

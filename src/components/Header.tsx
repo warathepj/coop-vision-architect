@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Sun, Moon, Info } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   onToggleInfo: () => void;
@@ -26,6 +27,7 @@ const Header = ({ onToggleInfo }: HeaderProps) => {
         </div>
         
         <div className="flex gap-2">
+          <Button asChild><Link to="/data">Data</Link></Button>
           <Button 
             variant="outline" 
             size="icon"
