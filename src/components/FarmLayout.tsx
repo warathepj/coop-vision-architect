@@ -16,6 +16,8 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
   const [centerTemp, setCenterTemp] = useState<number>(24);
   const [coopBCornerTemp, setCoopBCornerTemp] = useState<number>(24);
   const [coopBCenterTemp, setCoopBCenterTemp] = useState<number>(24);
+  const [coopCTemp, setCoopCTemp] = useState<number>(24);
+  const [mainVentTemp, setMainVentTemp] = useState<number>(23);
 
   useEffect(() => {
     // Update temperatures every 5 seconds
@@ -38,6 +40,14 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
       const maxCoopBCenterTemp = Math.min(30, newCoopBCornerTemp + 1);
       const newCoopBCenterTemp = minCoopBCenterTemp + Math.random() * (maxCoopBCenterTemp - minCoopBCenterTemp);
       setCoopBCenterTemp(Math.round(newCoopBCenterTemp * 10) / 10);
+
+      // Coop C temperature (18-27 range)
+      const newCoopCTemp = Math.floor(Math.random() * (27 - 18 + 1)) + 18;
+      setCoopCTemp(newCoopCTemp);
+
+      // Main ventilation temperature (17-29 range)
+      const newMainVentTemp = Math.floor(Math.random() * (29 - 17 + 1)) + 17;
+      setMainVentTemp(newMainVentTemp);
     }, 5000);
 
     // Cleanup interval on component unmount
@@ -147,6 +157,20 @@ const FarmLayout = ({ onSelectArea }: FarmLayoutProps) => {
               {(sensor.id === "sensor-coop-b-2" || sensor.id === "sensor-coop-b-1") && (
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
                   {sensor.id === "sensor-coop-b-2" ? coopBCornerTemp : coopBCenterTemp}°C
+                </div>
+              )}
+
+              {/* Show temperature for Coop C sensor */}
+              {sensor.id === "sensor-coop-c-1" && (
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
+                  {coopCTemp}°C
+                </div>
+              )}
+
+              {/* Show temperature for main ventilation sensor */}
+              {sensor.id === "sensor-vent-1" && (
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium bg-amber-100 dark:bg-amber-900 px-1 rounded">
+                  {mainVentTemp}°C
                 </div>
               )}
 
