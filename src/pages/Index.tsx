@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import FarmLayout from "@/components/FarmLayout";
 import InfoPanel from "@/components/InfoPanel";
@@ -7,9 +7,38 @@ import Dashboard from "@/components/Dashboard";
 import { FarmArea } from "@/lib/farmData";
 import { cn } from "@/lib/utils";
 
+interface TemperatureData {
+  coopA: {
+    corner: number;
+    center: number;
+  };
+  coopB: {
+    corner: number;
+    center: number;
+  };
+  coopC: {
+    center: number;
+  };
+  ventilation: {
+    main: number;
+    secondary: number;
+    east: number;
+  };
+  processing: {
+    eggWashing: number;
+    eggStorage: number;
+  };
+  timestamp: string;
+}
+
 const Index = () => {
   const [selectedArea, setSelectedArea] = useState<FarmArea | null>(null);
   const [showInfoPanel, setShowInfoPanel] = useState<boolean>(false);
+  const [temperatures, setTemperatures] = useState<TemperatureData | null>(null);
+
+  const handleTemperatureUpdate = (data: TemperatureData) => {
+    setTemperatures(data);
+  };
 
   const handleSelectArea = (area: FarmArea | null) => {
     setSelectedArea(area);
@@ -37,6 +66,30 @@ const Index = () => {
     }
   };
 
+  useEffect(() => {
+    if (temperatures) {
+      fetch('http://localhost:3000/api/temperature-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(temperatures),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(responseData => {
+          console.log('Data published to simulator-backend:', responseData);
+        })
+        .catch(error => {
+          console.error('Error publishing data to simulator-backend:', error);
+        });
+    }
+  }, [temperatures]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header onToggleInfo={handleToggleInfo} />
@@ -51,7 +104,10 @@ const Index = () => {
           )}>
             <h2 className="text-2xl font-semibold mb-4">Farm Layout</h2>
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
-              <FarmLayout onSelectArea={handleSelectArea} />
+              <FarmLayout 
+                onSelectArea={handleSelectArea} 
+                onTemperatureUpdate={handleTemperatureUpdate}
+              />
             </div>
           </div>
           
@@ -75,6 +131,12 @@ const Index = () => {
         </div>
       </main>
       
+      {temperatures && (
+        <pre className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg mt-8 overflow-auto">
+          {JSON.stringify(temperatures, null, 2)}
+        </pre>
+      )}
+
       <footer className="mt-8 py-6 border-t bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>Egg Farm Simulator &copy; {new Date().getFullYear()}</p>

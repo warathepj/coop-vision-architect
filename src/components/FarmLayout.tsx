@@ -4,20 +4,33 @@ import { useState, useEffect } from "react";
 import { Thermometer, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+// Import the publisher
+// import { publishTemperatureData } from "@/lib/publisher";
 
 interface FarmLayoutProps {
   onSelectArea: (area: FarmArea | null) => void;
   onTemperatureUpdate?: (temperatures: {
-    cornerTemp: number;
-    centerTemp: number;
-    coopBCornerTemp: number;
-    coopBCenterTemp: number;
-    coopCTemp: number;
-    mainVentTemp: number;
-    secondaryVentTemp: number;
-    eastVentTemp: number;
-    eggWashingTemp: number;
-    eggStorageTemp: number;
+    coopA: {
+      corner: number;
+      center: number;
+    };
+    coopB: {
+      corner: number;
+      center: number;
+    };
+    coopC: {
+      center: number;
+    };
+    ventilation: {
+      main: number;
+      secondary: number;
+      east: number;
+    };
+    processing: {
+      eggWashing: number;
+      eggStorage: number;
+    };
+    timestamp: string;
   }) => void;
 }
 
@@ -80,6 +93,53 @@ const FarmLayout = ({ onSelectArea, onTemperatureUpdate }: FarmLayoutProps) => {
       // Egg storage temperature (7-16 range)
       const newEggStorageTemp = Math.floor(Math.random() * (16 - 7 + 1)) + 7;
       setEggStorageTemp(newEggStorageTemp);
+      
+      // After setting all temperatures, create a data object to publish
+      const temperatureData = {
+        coopA: {
+          corner: newCornerTemp,
+          center: Math.round(newCenterTemp * 10) / 10
+        },
+        coopB: {
+          corner: newCoopBCornerTemp,
+          center: Math.round(newCoopBCenterTemp * 10) / 10
+        },
+        coopC: {
+          center: newCoopCTemp
+        },
+        ventilation: {
+          main: newMainVentTemp,
+          secondary: newSecondaryVentTemp,
+          east: newEastVentTemp
+        },
+        processing: {
+          eggWashing: newEggWashingTemp,
+          eggStorage: newEggStorageTemp
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      // Send data to simulator-backend instead of using local publisher
+      fetch('http://localhost:3000/api/temperature-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(temperatureData),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(responseData => {
+        console.log('Data published to simulator-backend:', responseData);
+      })
+      .catch(error => {
+        console.error('Error publishing data to simulator-backend:', error);
+      });
+      
     }, 5000);
 
     // Cleanup interval on component unmount
@@ -89,16 +149,27 @@ const FarmLayout = ({ onSelectArea, onTemperatureUpdate }: FarmLayoutProps) => {
   useEffect(() => {
     // Notify parent component of temperature updates
     onTemperatureUpdate?.({
-      cornerTemp,
-      centerTemp,
-      coopBCornerTemp,
-      coopBCenterTemp,
-      coopCTemp,
-      mainVentTemp,
-      secondaryVentTemp,
-      eastVentTemp,
-      eggWashingTemp,
-      eggStorageTemp
+      coopA: {
+        corner: cornerTemp,
+        center: centerTemp
+      },
+      coopB: {
+        corner: coopBCornerTemp,
+        center: coopBCenterTemp
+      },
+      coopC: {
+        center: coopCTemp
+      },
+      ventilation: {
+        main: mainVentTemp,
+        secondary: secondaryVentTemp,
+        east: eastVentTemp
+      },
+      processing: {
+        eggWashing: eggWashingTemp,
+        eggStorage: eggStorageTemp
+      },
+      timestamp: new Date().toISOString()
     });
   }, [
     cornerTemp,
