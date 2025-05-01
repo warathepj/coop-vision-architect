@@ -1,5 +1,5 @@
 import { farmAreas, temperatureSensors, farmStats } from "@/lib/farmData";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import FarmLayout from "@/components/FarmLayout";
 
 const Data = () => {
@@ -26,7 +26,7 @@ const Data = () => {
     }
   });
 
-  const handleTemperatureUpdate = (temps: any) => {
+  const handleTemperatureUpdate = useCallback((temps: any) => {
     setTemperatures({
       coopA: {
         corner: temps.cornerTemp,
@@ -49,7 +49,7 @@ const Data = () => {
         eggStorage: temps.eggStorageTemp
       }
     });
-  };
+  }, []); // Empty dependency array since this function doesn't depend on any props or state
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -148,4 +148,5 @@ const Data = () => {
 };
 
 export default Data;
+
 

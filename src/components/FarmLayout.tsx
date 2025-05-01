@@ -382,22 +382,22 @@ const FarmLayout = ({ onSelectArea, onTemperatureUpdate }: FarmLayoutProps) => {
           <div className="grid grid-cols-2 gap-2 mt-3">
             <div>
               <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-300 w-full justify-center">
-                Coops: 21-24°C
+                Coops: 17-30°C
               </Badge>
             </div>
             <div>
               <Badge variant="outline" className="bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 w-full justify-center">
-                Processing: 16-22°C
+                Processing: 16-24°C
               </Badge>
             </div>
             <div>
               <Badge variant="outline" className="bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-300 w-full justify-center">
-                Storage: 10-14°C
+                Storage: 7-16°C
               </Badge>
             </div>
             <div>
               <Badge variant="outline" className="bg-purple-50 dark:bg-purple-950 text-purple-800 dark:text-purple-300 w-full justify-center">
-                Ventilation: 18-28°C
+                Ventilation: 17-29°C
               </Badge>
             </div>
           </div>

@@ -68,25 +68,12 @@ const Index = () => {
 
   useEffect(() => {
     if (temperatures) {
-      fetch('http://localhost:3000/api/temperature-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(temperatures),
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(responseData => {
-          console.log('Data published to simulator-backend:', responseData);
-        })
-        .catch(error => {
-          console.error('Error publishing data to simulator-backend:', error);
-        });
+      // We're removing the fetch call here since FarmLayout already sends the data
+      // This will prevent duplicate data being sent to the backend
+      console.log('Temperature data updated:', temperatures);
+      
+      // The data is already being sent from FarmLayout component
+      // No need to send it again from here
     }
   }, [temperatures]);
 
